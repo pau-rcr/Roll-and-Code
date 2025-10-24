@@ -13,35 +13,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.rollandcode.ui.theme.RollandCodeTheme
 
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.rollandcode.ui.screens.HomeScreen
+import com.example.rollandcode.ui.screens.LoginScreen
+import com.example.rollandcode.ui.screens.RegisterScreen
+import com.example.rollandcode.ui.screens.SplashScreen
+import com.example.rollandcode.ui.theme.RollandCodeTheme
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             RollandCodeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "splash") {
+                    composable("splash") { SplashScreen(navController) }
+                    composable("login") { LoginScreen(navController) }
+                    composable("register") { RegisterScreen(navController) }
+                    composable("home/{userName}") { backStackEntry ->
+                        HomeScreen(
+                            userName = backStackEntry.arguments?.getString("userName") ?: "",
+                            navController = navController
+                        )
+                    }
+
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RollandCodeTheme {
-        Greeting("Android")
     }
 }
