@@ -1,5 +1,6 @@
 package com.example.rollandcode.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -10,8 +11,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.material3.Checkbox
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rollandcode.data.User
 import com.example.rollandcode.data.AppDatabase
 import kotlinx.coroutines.launch
@@ -33,25 +34,31 @@ fun RegisterScreen(navController: NavController) {
     var passwordError by remember { mutableStateOf(false) }
     var confirmPassError by remember { mutableStateOf(false) }
 
-    fun validate() : Boolean {
+    fun validate(): Boolean {
         var valid = true
         nameError = name.isBlank()
         emailError = !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() || !email.endsWith("@duoc.cl")
         passwordError = password.length < 6
         confirmPassError = password != confirmPassword
-        if(nameError || emailError || passwordError || confirmPassError) valid = false
+        if (nameError || emailError || passwordError || confirmPassError) valid = false
         return valid
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+            .background(MaterialTheme.colorScheme.background)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Registro", style = MaterialTheme.typography.headlineLarge, color=MaterialTheme.colorScheme.primary)
+        Text(
+            text = "Registro",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
             value = name,
@@ -60,9 +67,9 @@ fun RegisterScreen(navController: NavController) {
             isError = nameError,
             modifier = Modifier.fillMaxWidth()
         )
-        if(nameError) Text("El nombre no puede estar vacío", color = MaterialTheme.colorScheme.error)
+        if (nameError) Text("El nombre no puede estar vacío", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = email,
@@ -72,9 +79,9 @@ fun RegisterScreen(navController: NavController) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
         )
-        if(emailError) Text("Correo inválido o no es @duoc.cl", color = MaterialTheme.colorScheme.error)
+        if (emailError) Text("Correo inválido o no termina en @duoc.cl", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = password,
@@ -84,9 +91,9 @@ fun RegisterScreen(navController: NavController) {
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        if(passwordError) Text("Debe tener al menos 6 caracteres", color = MaterialTheme.colorScheme.error)
+        if (passwordError) Text("Debe tener al menos 6 caracteres", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = confirmPassword,
@@ -96,9 +103,9 @@ fun RegisterScreen(navController: NavController) {
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        if(confirmPassError) Text("Las contraseñas no coinciden", color = MaterialTheme.colorScheme.error)
+        if (confirmPassError) Text("Las contraseñas no coinciden", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = phone,
@@ -108,11 +115,24 @@ fun RegisterScreen(navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(20.dp))
+
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = rememberMe,
+                onCheckedChange = { rememberMe = it }
+            )
+            Text("Recordarme", color = MaterialTheme.colorScheme.onBackground)
+        }
+
+        Spacer(Modifier.height(20.dp))
 
         Button(
             onClick = {
-                if(validate()) {
+                if (validate()) {
                     coroutineScope.launch {
                         val existing = db.userDao().getUserByEmail(email)
                         if (existing == null) {
@@ -129,6 +149,7 @@ fun RegisterScreen(navController: NavController) {
             Text("Registrar")
         }
         if (registerError.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
             Text(
                 text = registerError,
                 color = MaterialTheme.colorScheme.error,
@@ -136,8 +157,7 @@ fun RegisterScreen(navController: NavController) {
             )
         }
 
-
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(20.dp))
 
         TextButton(onClick = { navController.navigate("login") }) {
             Text("Volver a Iniciar sesión", color = MaterialTheme.colorScheme.primary)
