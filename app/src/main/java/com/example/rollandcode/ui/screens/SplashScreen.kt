@@ -21,7 +21,7 @@ fun SplashScreen(navController: NavController) {
             .background(Color(0xFF121212)), // fondo oscuro
         contentAlignment = Alignment.Center
     ) {
-        Text("Gamezone", style = MaterialTheme.typography.headlineLarge, color = Color(0xFFFF6600))
+        Text("GameZone", style = MaterialTheme.typography.headlineLarge, color = Color(0xFFFF6600))
         LaunchedEffect(true) {
             delay(2000L) // 2 segundos
             navController.navigate("login") {
